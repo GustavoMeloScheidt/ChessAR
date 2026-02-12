@@ -191,12 +191,16 @@ public class Chessboard : MonoBehaviour
         var om = cp.gameObject.AddComponent<ObjectManipulator>();
         om.AllowedManipulations = TransformFlags.Move;
 
-        // Remove auto-added BoundsControl and its handles to prevent collider conflicts
+        // Remove auto-added BoundsControl and its entire visual container
         var boundsControl = cp.GetComponent<BoundsControl>();
         if (boundsControl != null)
             DestroyImmediate(boundsControl);
-        foreach (var handle in cp.GetComponentsInChildren<BoundsHandleInteractable>())
-            DestroyImmediate(handle.gameObject);
+        for (int i = cp.transform.childCount - 1; i >= 0; i--)
+        {
+            var child = cp.transform.GetChild(i);
+            if (child.name.Contains("BoundingBox"))
+                DestroyImmediate(child.gameObject);
+        }
 
         // Enlarge collider for easier hand grabbing
         var collider = cp.GetComponent<BoxCollider>();
